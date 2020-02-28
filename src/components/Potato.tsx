@@ -1,11 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Canvg from 'canvg';
+import Konva from 'konva';
 import * as FileSaver from 'file-saver';
 import { FaArrowCircleLeft, FaDownload } from 'react-icons/fa';
 
 import ControlItem from './ControlItem';
 import './Potato.scss';
+import { Image as KonvaImage } from 'konva/types/shapes/Image';
+import { Layer as KonvaLayer } from 'konva/types/Layer';
 
 function Potato() {
 	const [sceneState, setSceneState] = useState(1);
@@ -13,10 +15,6 @@ function Potato() {
 	const [mouthState, setMouthState] = useState(1);
 	const [eyeState, setEyeState] = useState(1);
 	const [accessoryState, setAccessoryState] = useState(1);
-
-	const canvas = useRef<HTMLCanvasElement>(null);
-	const canvg = useRef<Canvg | null>(null);
-
 
 	const triggerDownload = (blob: Blob) => {
 		FileSaver.saveAs(blob, 'my_potato.png');
@@ -31,36 +29,56 @@ function Potato() {
 	};
 
 	const downloadClicked = () => {
-		async function render(ctx: CanvasRenderingContext2D, url: string) {
-			if (canvg) {
-				canvg.current = await Canvg.from(ctx, url, {
-					ignoreClear: true,
-					ignoreMouse: true,
-					ignoreDimensions: true
+		const loadImage = (src: string) => {
+			return new Promise<KonvaImage>((resolve, reject) => {
+				Konva.Image.fromURL(src, (image: KonvaImage) => {
+					resolve(image);
 				});
-				canvg.current.start();
-			}
+			});
 		}
 
-		async function renderCanvas(ctx: CanvasRenderingContext2D) {
-			await render(ctx, `/images/svg/scene/${sceneState}.svg`);
-			await render(ctx, `/images/svg/body/${bodyState}.svg`);
-			await render(ctx, `/images/svg/mouth/${mouthState}.svg`);
-			await render(ctx, `/images/svg/eye/${eyeState}.svg`);
-			await render(ctx, `/images/svg/accessory/${accessoryState}.svg`);
+		const drawNode = (layer: KonvaLayer, image: KonvaImage) => {
+			image.setAttrs({
+				x: 0,
+				y: 0,
+				width: 400,
+				height: 400
+			});
+			layer.add(image);
+			layer.batchDraw();
+		};
+
+		async function renderCanvas() {
+			var stage = new Konva.Stage({
+				container: 'canvas',
+				width: 400,
+				height: 400
+			});
+
+			var layer = new Konva.Layer();
+			stage.add(layer);
+
+			const sceneNode = await loadImage(`/images/png/scene/${sceneState}.png`);
+			const bodyNode = await loadImage(`/images/png/body/${bodyState}.png`);
+			const mouthNode = await loadImage(`/images/png/mouth/${mouthState}.png`);
+			const eyeNode = await loadImage(`/images/png/eye/${eyeState}.png`);
+			const accessoryNode = await loadImage(`/images/png/accessory/${accessoryState}.png`);
+
+			drawNode(layer, sceneNode);
+			drawNode(layer, bodyNode);
+			drawNode(layer, mouthNode);
+			drawNode(layer, eyeNode);
+			drawNode(layer, accessoryNode);
+
+			return layer.toCanvas({});
 		}
 
-		async function downloadhandler(ctx: CanvasRenderingContext2D | null) {
-			if (ctx) {
-				await renderCanvas(ctx);
-				if (canvas && canvas.current) {
-					downloadAsPng(canvas.current);
-				}
-			}
+		async function downloadhandler() {
+			const canvas = await renderCanvas();
+			downloadAsPng(canvas);
 		}
 
-		const ctx: CanvasRenderingContext2D | null = canvas.current ? canvas.current.getContext('2d') : null;
-		downloadhandler(ctx);
+		downloadhandler();
 	}
 
 	return (
@@ -77,7 +95,7 @@ function Potato() {
 					</button>
 				</li>
 			</ul>
-			<canvas id="canvas" width="400" height="400" ref={canvas} className="hidden" />
+			<div id="canvas" className="hidden"></div>
 			<div className="canvasView">
 				<object className="canvasView__item canvasView__scene" type="image/svg+xml"
 					data={`/images/svg/scene/${sceneState}.svg`}>배경</object>
