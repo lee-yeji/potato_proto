@@ -1,0 +1,24 @@
+.front {
+  position: relative;
+
+  background: url(/images/front.png) no-repeat;
+  background-size: contain;
+  width: 800px;
+  height: 600px;
+}
+
+.front__enterlink {
+  position: absolute;
+  left: 480px;
+  top: 360px;
+
+  width: 120px;
+  height: 70px;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.front__enterlink_label {
+  position: absolute;
+  left: 510px;
+  top: 430px;
+}

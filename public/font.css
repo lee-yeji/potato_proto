@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'Jua';
+    font-weight: 400;
+    src: url(fonts/BMJUAOTF00.eot);
+    src: url(fonts/BMJUAOTF00.eot?#iefix) format('embedded-opentype'),
+        url(fonts/BMJUAOTF00.woff) format('woff'),
+        url(fonts/BMJUAOTF00.ttf) format('truetype');
+}

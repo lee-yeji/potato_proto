@@ -1,0 +1,39 @@
+@mixin typo_content {
+    font-family: 'Jua', sans-serif;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+}
+
+@mixin typo_title {
+    font-family: 'Jua', sans-serif;
+    font-size: 40px;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+}
+
+@mixin typo_content_title--big {
+    font-family: 'Jua', sans-serif;
+    font-size: 30px;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+}
+
+@mixin typo_content_title {
+    font-family: 'Jua', sans-serif;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+}
+
+
+
+
+
+
+
+
+
+.typo_content_title {
+    @include typo_content_title;
+}
