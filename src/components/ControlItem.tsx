@@ -16,13 +16,17 @@ function ControlItem({
 	setState: React.Dispatch<React.SetStateAction<number>>;
 }) {
 	const increaseState = () => {
-		const nextState = Math.min(state + 1, maxState);
+		const nextState = state % maxState + 1;
 		setState(nextState);
 	};
 
 	const decreaseState = () => {
-		const nextState = Math.max(state - 1, 1);
-		setState(nextState);
+		const nextState = state - 1;
+		if (nextState) {
+			setState(nextState);
+		} else {
+			setState(maxState);
+		}
 	};
 
 	return (
