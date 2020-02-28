@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Canvg from 'canvg';
+import * as FileSaver from 'file-saver';
 import { FaArrowCircleLeft, FaDownload } from 'react-icons/fa';
-import ControlItem from './ControlItem';
 
+import ControlItem from './ControlItem';
 import './Potato.scss';
 
 function Potato() {
@@ -16,16 +17,18 @@ function Potato() {
 	const canvas = useRef<HTMLCanvasElement>(null);
 	const canvg = useRef<Canvg | null>(null);
 
-	const downloadAsPng = (canvas: HTMLCanvasElement) => {
-		var dataURL = canvas.toDataURL('image/png');
-		dataURL = dataURL.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
-		dataURL = dataURL.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Canvas.png');
 
-		var a = document.createElement('a');
-		a.download = 'my_potato.png';
-		a.href = dataURL;
-		a.click();
-	}
+	const triggerDownload = (blob: Blob) => {
+		FileSaver.saveAs(blob, 'my_potato.png');
+	};
+
+	const downloadAsPng = (canvas: HTMLCanvasElement) => {
+		canvas.toBlob(imageBlob => {
+			if (imageBlob) {
+				triggerDownload(imageBlob);
+			}
+		});
+	};
 
 	const downloadClicked = () => {
 		async function render(ctx: CanvasRenderingContext2D, url: string) {
