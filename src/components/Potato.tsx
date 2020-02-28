@@ -1,6 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Canvg from 'canvg';
+import { FaArrowCircleLeft, FaDownload } from 'react-icons/fa';
 import ControlItem from './ControlItem';
 
 import './Potato.scss';
@@ -64,12 +65,12 @@ function Potato() {
 			<ul className="controls--page clearfix">
 				<li className="controls--page__row controls--page__back">
 					<Link to="/" className="potato__backlink">
-						<i className="controls--page__row__icon fas fa-chevron-circle-left" />
+						<FaArrowCircleLeft className="controls--page__row__icon" />
 					</Link>
 				</li>
 				<li className="controls--page__row controls--page__down">
 					<button onClick={downloadClicked}>
-						<i className="controls--page__row__icon fas fa-download" />
+						<FaDownload className="controls--page__row__icon" />
 					</button>
 				</li>
 			</ul>

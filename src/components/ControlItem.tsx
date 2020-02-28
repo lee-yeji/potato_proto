@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+
 import './Potato.scss';
 
 function ControlItem({
@@ -27,11 +29,11 @@ function ControlItem({
 		<li className="controls--canvas__row controls--canvas__scene">
 			<span className="controls--canvas__row__title">{title}</span>
 			<button className="controls--canvas__row__leftbutton" onClick={decreaseState}>
-				<i className="fas fa-chevron-left" />
+				<FaAngleLeft />
 			</button>
 			<span className="controls--canvas__row__number">{state}</span>
 			<button className="controls--canvas__row__rightbutton" onClick={increaseState}>
-				<i className="fas fa-chevron-right" />
+				<FaAngleRight />
 			</button>
 		</li>
 	);
