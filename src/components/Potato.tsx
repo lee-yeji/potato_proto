@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Konva from 'konva';
-import * as FileSaver from 'file-saver';
+
 import { FaArrowCircleLeft, FaDownload } from 'react-icons/fa';
 
 import ControlItem from './ControlItem';
-import './Potato.scss';
+import Canvas from './Canvas';
+
 import { Image as KonvaImage } from 'konva/types/shapes/Image';
-import { Layer as KonvaLayer } from 'konva/types/Layer';
+import './Potato.scss';
+
 
 function Potato() {
 	const [sceneState, setSceneState] = useState(1);
@@ -16,66 +17,26 @@ function Potato() {
 	const [eyeState, setEyeState] = useState(1);
 	const [accessoryState, setAccessoryState] = useState(1);
 
-	const triggerDownload = (blob: Blob) => {
-		FileSaver.saveAs(blob, 'my_potato.png');
-	};
-
-	const downloadAsPng = (canvas: HTMLCanvasElement) => {
-		canvas.toBlob(imageBlob => {
-			if (imageBlob) {
-				triggerDownload(imageBlob);
-			}
-		});
-	};
-
 	const downloadClicked = () => {
-		const loadImage = (src: string) => {
-			return new Promise<KonvaImage>((resolve, reject) => {
-				Konva.Image.fromURL(src, (image: KonvaImage) => {
-					resolve(image);
-				});
-			});
-		}
-
-		const drawNode = (layer: KonvaLayer, image: KonvaImage) => {
-			image.setAttrs({
-				x: 0,
-				y: 0,
-				width: 400,
-				height: 400
-			});
-			layer.add(image);
-			layer.batchDraw();
-		};
-
-		async function renderCanvas() {
-			var stage = new Konva.Stage({
-				container: 'canvas',
-				width: 400,
-				height: 400
-			});
-
-			var layer = new Konva.Layer();
-			stage.add(layer);
-
-			const sceneNode = await loadImage(`/images/png/scene/${sceneState}.png`);
-			const bodyNode = await loadImage(`/images/png/body/${bodyState}.png`);
-			const mouthNode = await loadImage(`/images/png/mouth/${mouthState}.png`);
-			const eyeNode = await loadImage(`/images/png/eye/${eyeState}.png`);
-			const accessoryNode = await loadImage(`/images/png/accessory/${accessoryState}.png`);
-
-			drawNode(layer, sceneNode);
-			drawNode(layer, bodyNode);
-			drawNode(layer, mouthNode);
-			drawNode(layer, eyeNode);
-			drawNode(layer, accessoryNode);
-
-			return layer.toCanvas({});
-		}
-
 		async function downloadhandler() {
-			const canvas = await renderCanvas();
-			downloadAsPng(canvas);
+
+			const scene = Canvas.loadImage(`/images/png/scene/${sceneState}.png`);
+			const body = Canvas.loadImage(`/images/png/body/${bodyState}.png`);
+			const mouth = Canvas.loadImage(`/images/png/mouth/${mouthState}.png`);
+			const eye = Canvas.loadImage(`/images/png/eye/${eyeState}.png`);
+			const accessory = Canvas.loadImage(`/images/png/accessory/${accessoryState}.png`);
+
+			// 이미지 그리기. 병렬처리로 이미지를 받아오고 그릴때는 순서대로 그려줘야 한다.
+			Promise.all([scene, body, mouth, eye, accessory]).then((images: Array<KonvaImage>) => {
+				const canvas = new Canvas();
+				canvas.drawImage(images[0]);
+				canvas.drawImage(images[1]);
+				canvas.drawImage(images[2]);
+				canvas.drawImage(images[3]);
+				canvas.drawImage(images[4]);
+				canvas.downloadAsPng();
+			});
+
 		}
 
 		downloadhandler();
