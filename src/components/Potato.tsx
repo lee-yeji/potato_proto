@@ -19,15 +19,15 @@ function Potato() {
 
 	const downloadClicked = () => {
 		async function downloadhandler() {
+			// 이미지 로딩은 병렬로 처리 
+			const scenePromise = Canvas.loadImage(`/images/png/scene/${sceneState}.png`);
+			const bodyPromise = Canvas.loadImage(`/images/png/body/${bodyState}.png`);
+			const mouthPromise = Canvas.loadImage(`/images/png/mouth/${mouthState}.png`);
+			const eyePromise = Canvas.loadImage(`/images/png/eye/${eyeState}.png`);
+			const accessoryPromise = Canvas.loadImage(`/images/png/accessory/${accessoryState}.png`);
 
-			const scene = Canvas.loadImage(`/images/png/scene/${sceneState}.png`);
-			const body = Canvas.loadImage(`/images/png/body/${bodyState}.png`);
-			const mouth = Canvas.loadImage(`/images/png/mouth/${mouthState}.png`);
-			const eye = Canvas.loadImage(`/images/png/eye/${eyeState}.png`);
-			const accessory = Canvas.loadImage(`/images/png/accessory/${accessoryState}.png`);
-
-			// 이미지 그리기. 병렬처리로 이미지를 받아오고 그릴때는 순서대로 그려줘야 한다.
-			Promise.all([scene, body, mouth, eye, accessory]).then((images: Array<KonvaImage>) => {
+			// 그릴때는 순서대로 그려줘야 한다.
+			Promise.all([scenePromise, bodyPromise, mouthPromise, eyePromise, accessoryPromise]).then((images: Array<KonvaImage>) => {
 				const canvas = new Canvas();
 				canvas.drawImage(images[0]);
 				canvas.drawImage(images[1]);
